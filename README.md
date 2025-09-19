@@ -47,8 +47,58 @@
 
 ### Быстрый старт через Docker
 
-1. Клонируйте репозиторий:
-
-```bash
+# Клонируем репозиторий
 git clone git@github.com:Dok2314/mini-crm.git
 cd mini-crm
+
+# Создаем .env на основе примера
+cp .env.example .env
+
+# Запускаем контейнеры (сборка если нужно)
+docker-compose up -d --build
+
+# Проверяем, что контейнеры запущены
+docker ps
+
+# Устанавливаем зависимости Laravel
+docker exec -it crm_php composer install
+
+# Генерируем ключ приложения
+docker exec -it crm_php php artisan key:generate
+
+# Применяем миграции и сиды
+docker exec -it crm_php php artisan migrate:fresh --seed
+
+# Очистка кэшей (опционально)
+docker exec -it crm_php php artisan config:clear
+docker exec -it crm_php php artisan cache:clear
+docker exec -it crm_php php artisan route:clear
+docker exec -it crm_php php artisan view:clear
+
+# Открываем проект в браузере
+# http://localhost:8080
+
+# Подключение к MySQL (через Workbench или любой клиент)
+# Host: 127.0.0.1
+# Port: 3306
+# Database: laravel
+# Username: laravel_user
+# Password: root
+
+# Полезные команды Docker:
+# Остановить контейнеры
+docker-compose down
+
+# Перезапустить контейнеры
+docker-compose restart
+
+# Войти в PHP контейнер
+docker exec -it crm_php bash
+
+# Выполнить любую команду Laravel в контейнере
+docker exec -it crm_php php artisan <command>
+
+# Смотреть логи контейнеров
+docker logs -f crm_nginx
+docker logs -f crm_php
+docker logs -f crm_db
