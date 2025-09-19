@@ -1,21 +1,20 @@
 # Mini-CRM
 
-Мини-CRM для сбора и обработки заявок с сайта через универсальный виджет.
+Мини-CRM для сбора и обработки заявок с сайта через универсальный виджет.  
+Проект построен на **Laravel 12**, **PHP 8.4**, с Docker для быстрого запуска.
 
 ---
 
 ## Описание
 
-Проект представляет собой мини-CRM на Laravel 12 с PHP 8.4.  
+Мини-CRM позволяет:
 
-Основные возможности:
-
-- Сбор заявок через виджет (`/widget`) с валидацией телефонов (формат E.164).  
-- REST API для создания заявок и получения статистики (`/api/tickets`, `/api/tickets/statistics`).  
-- Административная панель для менеджеров: просмотр заявок, фильтры, изменение статусов, скачивание файлов.  
-- Роли и права через [spatie/laravel-permission](https://spatie.be/docs/laravel-permission/v5/introduction).  
-- Файлы заявок через [spatie/laravel-medialibrary](https://spatie.be/docs/laravel-medialibrary/v10/introduction).  
-- Тестовые данные через миграции, фабрики и сидеры.
+- Собирать заявки через виджет (`/widget`) с валидацией телефонов (формат E.164).
+- Отправлять заявки через REST API (`/api/tickets`) и получать статистику (`/api/tickets/statistics`).
+- Управлять заявками через админ-панель: просмотр, фильтры, изменение статусов, скачивание файлов.
+- Управлять ролями и правами через [spatie/laravel-permission](https://spatie.be/docs/laravel-permission/v5/introduction).
+- Прикреплять файлы к заявкам через [spatie/laravel-medialibrary](https://spatie.be/docs/laravel-medialibrary/v10/introduction).
+- Использовать тестовые данные через миграции, фабрики и сидеры.
 
 ---
 
@@ -28,16 +27,16 @@
 - **Ticket (заявка)**: связь с Customer, тема, текст, статус (новый/в работе/обработан), дата ответа менеджера  
 - **File**: файлы заявок через Medialibrary  
 
-### Логика
+### Логика приложения
 
-- Сервисы и репозитории для бизнес-логики  
+- Все бизнес-операции через **сервисы и репозитории**  
 - Контроллеры только для вызова сервисов  
-- Валидация через FormRequest  
-- Строго по SOLID, MVC, KISS, DRY, PSR-12  
+- Валидация данных через **FormRequest**  
+- Код строго по **SOLID, MVC, KISS, DRY, PSR-12**  
 
 ---
 
-## Развертывание проекта
+## Быстрое развертывание проекта через Docker
 
 ### Требования
 
@@ -45,60 +44,36 @@
 - PHP 8.4  
 - MySQL 8+  
 
-### Быстрый старт через Docker
+### Шаги
 
-# Клонируем репозиторий
+```bash
+# 1. Клонируем репозиторий
 git clone git@github.com:Dok2314/mini-crm.git
 cd mini-crm
 
-# Создаем .env на основе примера
+# 2. Создаем .env на основе примера
 cp .env.example .env
 
-# Запускаем контейнеры (сборка если нужно)
+# 3. Запускаем контейнеры (сборка при необходимости)
 docker-compose up -d --build
 
-# Проверяем, что контейнеры запущены
+# 4. Проверяем, что контейнеры запущены
 docker ps
 
-# Устанавливаем зависимости Laravel
+# 5. Устанавливаем зависимости Laravel
 docker exec -it crm_php composer install
 
-# Генерируем ключ приложения
+# 6. Генерируем ключ приложения
 docker exec -it crm_php php artisan key:generate
 
-# Применяем миграции и сиды
+# 7. Применяем миграции и сидеры
 docker exec -it crm_php php artisan migrate:fresh --seed
 
-# Очистка кэшей (опционально)
+# 8. Очистка кэшей (опционально)
 docker exec -it crm_php php artisan config:clear
 docker exec -it crm_php php artisan cache:clear
 docker exec -it crm_php php artisan route:clear
 docker exec -it crm_php php artisan view:clear
 
-# Открываем проект в браузере
+# 9. Открываем проект в браузере
 # http://localhost:8080
-
-# Подключение к MySQL (через Workbench или любой клиент)
-# Host: 127.0.0.1
-# Port: 3306
-# Database: laravel
-# Username: laravel_user
-# Password: root
-
-# Полезные команды Docker:
-# Остановить контейнеры
-docker-compose down
-
-# Перезапустить контейнеры
-docker-compose restart
-
-# Войти в PHP контейнер
-docker exec -it crm_php bash
-
-# Выполнить любую команду Laravel в контейнере
-docker exec -it crm_php php artisan <command>
-
-# Смотреть логи контейнеров
-docker logs -f crm_nginx
-docker logs -f crm_php
-docker logs -f crm_db
