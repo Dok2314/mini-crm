@@ -9,4 +9,11 @@ class Customer extends Model
 {
     /** @use HasFactory<\Database\Factories\CustomerFactory> */
     use HasFactory;
+
+    protected $guarded = false;
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
 }

@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     zip unzip git curl \
+    nodejs npm \
  && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
  && apt-get clean
 
