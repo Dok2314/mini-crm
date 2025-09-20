@@ -46,6 +46,55 @@
 
 ### Шаги
 
+Бро, понял! Развертка изменилась - теперь вместо ручных docker exec команд используем готовый скрипт start.sh (как мы сделали раньше). Это упрощает жизнь: один файл, который все автоматизирует. Обновим README.md соответственно. Вот полная обновленная версия с учетом твоих изменений:
+markdown# Mini-CRM
+
+Мини-CRM для сбора и обработки заявок с сайта через универсальный виджет.  
+Проект построен на **Laravel 12**, **PHP 8.4**, с Docker для быстрого запуска.
+
+---
+
+## Описание
+
+Мини-CRM позволяет:
+
+- Собирать заявки через виджет (`/widget`) с валидацией телефонов (формат E.164).
+- Отправлять заявки через REST API (`/api/tickets`) и получать статистику (`/api/tickets/statistics`).
+- Управлять заявками через админ-панель: просмотр, фильтры, изменение статусов, скачивание файлов.
+- Управлять ролями и правами через [spatie/laravel-permission](https://spatie.be/docs/laravel-permission/v5/introduction).
+- Прикреплять файлы к заявкам через [spatie/laravel-medialibrary](https://spatie.be/docs/laravel-medialibrary/v10/introduction).
+- Использовать тестовые данные через миграции, фабрики и сидеры.
+
+---
+
+## Структура проекта
+
+### Сущности
+
+- **User (менеджер/админ)**: имя, email, пароль  
+- **Customer (клиент)**: имя, телефон (E.164), email  
+- **Ticket (заявка)**: связь с Customer, тема, текст, статус (новый/в работе/обработан), дата ответа менеджера  
+- **File**: файлы заявок через Medialibrary  
+
+### Логика приложения
+
+- Все бизнес-операции через **сервисы и репозитории**  
+- Контроллеры только для вызова сервисов  
+- Валидация данных через **FormRequest**  
+- Код строго по **SOLID, MVC, KISS, DRY, PSR-12**  
+
+---
+
+## Быстрое развертывание проекта через Docker
+
+### Требования
+
+- Docker & Docker Compose  
+- PHP 8.4  
+- MySQL 8+  
+
+### Шаги
+
 ```bash
 # 1. Клонируем репозиторий
 git clone git@github.com:Dok2314/mini-crm.git
@@ -54,26 +103,14 @@ cd mini-crm
 # 2. Создаем .env на основе примера
 cp .env.example .env
 
-# 3. Запускаем контейнеры
-docker-compose up -d --build
+# 3. Делаем скрипт запуска исполняемым
+chmod +x start.sh
 
-# 4. Проверяем, что контейнеры запущены
-docker ps
+# 4. Запускаем весь проект одной командой (контейнеры + зависимости + миграции + сидеры)
+./start.sh
 
-# 5. Устанавливаем зависимости Laravel
-docker exec -it crm_php composer install
+# 5. Проверяем, что контейнеры запущены
+docker compose ps
 
-# 6. Генерируем ключ приложения
-docker exec -it crm_php php artisan key:generate
-
-# 7. Применяем миграции и сидеры
-docker exec -it crm_php php artisan migrate:fresh --seed
-
-# 8. Очистка кэшей (опционально)
-docker exec -it crm_php php artisan config:clear
-docker exec -it crm_php php artisan cache:clear
-docker exec -it crm_php php artisan route:clear
-docker exec -it crm_php php artisan view:clear
-
-# 9. Открываем проект в браузере
+# 6. Открываем проект в браузере
 # http://localhost:8080
